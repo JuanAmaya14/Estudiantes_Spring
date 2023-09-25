@@ -1,4 +1,4 @@
-package com.Amaya.EstudiantesYNotas.infra;
+package com.Amaya.EstudiantesYNotas.infra.Errores;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ public class Errores {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity tratarError404(){
+    public ResponseEntity tratarError404() {
 
         return ResponseEntity.notFound().build();
 

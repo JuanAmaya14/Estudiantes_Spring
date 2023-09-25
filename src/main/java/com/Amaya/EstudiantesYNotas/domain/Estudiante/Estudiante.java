@@ -1,7 +1,7 @@
-package com.Amaya.EstudiantesYNotas.domain;
+package com.Amaya.EstudiantesYNotas.domain.Estudiante;
 
-import com.Amaya.EstudiantesYNotas.domain.datos.DatosModificarEstudiante;
-import com.Amaya.EstudiantesYNotas.domain.datos.DatosRegistroEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosModificarEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosRegistroEstudiante;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -41,37 +41,37 @@ public class Estudiante {
 
     public void modificarEstudiante(DatosModificarEstudiante datosModificarEstudiante) {
 
-        if(datosModificarEstudiante.nombre() != null){
+        if (datosModificarEstudiante.nombre() != null) {
 
             this.nombre = datosModificarEstudiante.nombre();
 
         }
 
-        if (datosModificarEstudiante.apellido() != null){
+        if (datosModificarEstudiante.apellido() != null) {
 
             this.apellido = datosModificarEstudiante.apellido();
 
         }
 
-        if (datosModificarEstudiante.descripcion() != null){
+        if (datosModificarEstudiante.descripcion() != null) {
 
             this.descripcion = datosModificarEstudiante.descripcion();
 
         }
 
-        if(datosModificarEstudiante.nota1() != 0){
+        if (datosModificarEstudiante.nota1() != 0) {
 
             this.nota1 = datosModificarEstudiante.nota1();
 
         }
 
-        if(datosModificarEstudiante.nota2() != 0){
+        if (datosModificarEstudiante.nota2() != 0) {
 
             this.nota2 = datosModificarEstudiante.nota2();
 
         }
 
-        if(datosModificarEstudiante.nota3() != 0){
+        if (datosModificarEstudiante.nota3() != 0) {
 
             this.nota3 = datosModificarEstudiante.nota3();
 

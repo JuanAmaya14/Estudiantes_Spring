@@ -1,12 +1,13 @@
 package com.Amaya.EstudiantesYNotas.Controller;
 
-import com.Amaya.EstudiantesYNotas.domain.Estudiante;
-import com.Amaya.EstudiantesYNotas.domain.datos.DatosListadoEstudiante;
-import com.Amaya.EstudiantesYNotas.domain.datos.DatosModificarEstudiante;
-import com.Amaya.EstudiantesYNotas.domain.datos.DatosRegistroEstudiante;
-import com.Amaya.EstudiantesYNotas.domain.datos.DatosRespuestaEstudiante;
-import com.Amaya.EstudiantesYNotas.domain.repositorio.EstudianteRepository;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Estudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosListadoEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosModificarEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosRegistroEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosRespuestaEstudiante;
+import com.Amaya.EstudiantesYNotas.repositorio.EstudianteRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class EstudianteController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity registrarEstudiante(@RequestBody DatosRegistroEstudiante datosRegistroEstudiante,
+    public ResponseEntity registrarEstudiante(@RequestBody @Valid DatosRegistroEstudiante datosRegistroEstudiante,
                                               UriComponentsBuilder uriComponentsBuilder) {
 
         String idEstudiante = estudianteRepository.encontrarIdPorNombreYApellidoEstudiante(datosRegistroEstudiante.nombre(),
@@ -53,7 +54,7 @@ public class EstudianteController {
                         estudiante.getNombre(), estudiante.getApellido(), estudiante.getDescripcion(), estudiante.getNota1(),
                         estudiante.getNota2(), estudiante.getNota3(), estudiante.getNotaFinal());
 
-                URI uri = uriComponentsBuilder.path("/usuario/{id}").buildAndExpand(estudiante.getId()).toUri();
+                URI uri = uriComponentsBuilder.path("/estudiante/{id}").buildAndExpand(estudiante.getId()).toUri();
 
                 return ResponseEntity.created(uri).body(datosRespuestaEstudiante);
 
@@ -93,7 +94,7 @@ public class EstudianteController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity modificarEstudiante(@RequestBody DatosModificarEstudiante datosModificarEstudiante){
+    public ResponseEntity modificarEstudiante(@RequestBody @Valid DatosModificarEstudiante datosModificarEstudiante){
 
         Estudiante estudiante = estudianteRepository.getReferenceById(datosModificarEstudiante.id());
 

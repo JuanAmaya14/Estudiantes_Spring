@@ -1,4 +1,4 @@
-package com.Amaya.EstudiantesYNotas.domain.datos;
+package com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
