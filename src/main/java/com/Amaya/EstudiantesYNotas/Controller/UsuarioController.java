@@ -1,6 +1,9 @@
 package com.Amaya.EstudiantesYNotas.Controller;
 
-import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.*;
+import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosListadoUsuario;
+import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosModificarUsuario;
+import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosRegistroUsuario;
+import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosRespuestaUsuario;
 import com.Amaya.EstudiantesYNotas.domain.Usuario.Usuario;
 import com.Amaya.EstudiantesYNotas.repositorio.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -79,12 +85,22 @@ public class UsuarioController {
 
         Usuario usuario = usuarioRepository.getReferenceById(datosModificarUsuario.id());
 
-        usuario.modificarUsuario(datosModificarUsuario, contrasenha);
+        long idUsuario = UsuarioLogeado();
 
-        DatosRespuestaUsuario datosRespuestaUsuario = new DatosRespuestaUsuario(usuario.getId(), usuario.getNombre(),
-                usuario.getContrasenha());
+        if (idUsuario == datosModificarUsuario.id()) {
 
-        return ResponseEntity.ok(datosRespuestaUsuario);
+            usuario.modificarUsuario(datosModificarUsuario, contrasenha);
+
+            DatosRespuestaUsuario datosRespuestaUsuario = new DatosRespuestaUsuario(usuario.getId(), usuario.getNombre(),
+                    usuario.getContrasenha());
+
+            return ResponseEntity.ok(datosRespuestaUsuario);
+
+        } else {
+
+            return ResponseEntity.badRequest().body("No puedes modificar los datos de alguien más");
+
+        }
 
     }
 
@@ -95,9 +111,31 @@ public class UsuarioController {
 
         Usuario usuario = usuarioRepository.getReferenceById(id);
 
-        usuarioRepository.deleteById(id);
+        long idUsuario = UsuarioLogeado();
 
-        return ResponseEntity.ok("El usuario: " + usuario.getNombre() + " fue eliminado exitosamente");
+        if (id == idUsuario) {
+
+            usuarioRepository.deleteById(id);
+
+            return ResponseEntity.ok("El usuario: " + usuario.getNombre() + " fue eliminado exitosamente");
+
+        } else {
+
+            return ResponseEntity.badRequest().body("No puedes borrar la cuenta de alguien más");
+
+        }
+
+    }
+
+    public long UsuarioLogeado(){
+
+        Authentication auth = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        UserDetails userDetail = (UserDetails) auth.getPrincipal();
+
+        return usuarioRepository.getIdUsuarioByCorreo(userDetail.getUsername());
 
     }
 
