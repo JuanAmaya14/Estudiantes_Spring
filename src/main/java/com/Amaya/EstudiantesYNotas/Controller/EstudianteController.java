@@ -1,11 +1,14 @@
 package com.Amaya.EstudiantesYNotas.Controller;
 
-import com.Amaya.EstudiantesYNotas.domain.Estudiante.Estudiante;
 import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosListadoEstudiante;
 import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosModificarEstudiante;
 import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosRegistroEstudiante;
 import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosRespuestaEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Estudiante;
 import com.Amaya.EstudiantesYNotas.repositorio.EstudianteRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/estudiante")
+@Tag(name = "Estudiante")
 public class EstudianteController {
 
     @Autowired
@@ -26,6 +30,7 @@ public class EstudianteController {
 
     @PostMapping
     @Transactional
+    @Operation(summary = "Registra un estudiante", security = @SecurityRequirement(name = "basicAuth"))
     public ResponseEntity registrarEstudiante(@RequestBody @Valid DatosRegistroEstudiante datosRegistroEstudiante,
                                               UriComponentsBuilder uriComponentsBuilder) {
 
@@ -51,8 +56,9 @@ public class EstudianteController {
                 Estudiante estudiante = estudianteRepository.save(new Estudiante(datosRegistroEstudiante));
 
                 DatosRespuestaEstudiante datosRespuestaEstudiante = new DatosRespuestaEstudiante(estudiante.getId(),
-                        estudiante.getNombre(), estudiante.getApellido(), estudiante.getDescripcion(), estudiante.getNota1(),
-                        estudiante.getNota2(), estudiante.getNota3(), estudiante.getNotaFinal());
+                        estudiante.getNombre(), estudiante.getApellido(), estudiante.getDescripcion(),
+                        estudiante.getCurso().toString(), estudiante.getNota1(), estudiante.getNota2(),
+                        estudiante.getNota3(), estudiante.getNotaFinal());
 
                 URI uri = uriComponentsBuilder.path("/estudiante/{id}").buildAndExpand(estudiante.getId()).toUri();
 
@@ -69,6 +75,7 @@ public class EstudianteController {
     }
 
     @GetMapping
+    @Operation(summary = "Lista todos los estudiantes", security = @SecurityRequirement(name = "basicAuth"))
     public List<Estudiante> listarEstudiantes() {
 
         return estudianteRepository.findAll();
@@ -76,7 +83,8 @@ public class EstudianteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DatosListadoEstudiante> listarEstudiantes(@PathVariable long id) {
+    @Operation(summary = "Lista estudiante por id", security = @SecurityRequirement(name = "basicAuth"))
+    public ResponseEntity<DatosListadoEstudiante> listarEstudiantesPorId(@PathVariable long id) {
 
         Estudiante estudiante = estudianteRepository.getReferenceById(id);
 
@@ -85,8 +93,8 @@ public class EstudianteController {
         String notaFinal = df.format(estudiante.getNotaFinal());
 
         DatosListadoEstudiante datosListadoEstudiante = new DatosListadoEstudiante(estudiante.getNombre(),
-                estudiante.getApellido(), estudiante.getDescripcion(), estudiante.getNota1(), estudiante.getNota2(), estudiante.getNota3(),
-                notaFinal);
+                estudiante.getApellido(), estudiante.getDescripcion(), estudiante.getCurso().toString(),
+                estudiante.getNota1(), estudiante.getNota2(), estudiante.getNota3(), notaFinal);
 
         return ResponseEntity.ok(datosListadoEstudiante);
 
@@ -94,7 +102,8 @@ public class EstudianteController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity modificarEstudiante(@RequestBody @Valid DatosModificarEstudiante datosModificarEstudiante){
+    @Operation(summary = "Modificar estudiante", security = @SecurityRequirement(name = "basicAuth"))
+    public ResponseEntity modificarEstudiante(@RequestBody @Valid DatosModificarEstudiante datosModificarEstudiante) {
 
         Estudiante estudiante = estudianteRepository.getReferenceById(datosModificarEstudiante.id());
 
@@ -123,8 +132,9 @@ public class EstudianteController {
                 estudiante.modificarEstudiante(datosModificarEstudiante);
 
                 DatosRespuestaEstudiante datosRespuestaEstudiante = new DatosRespuestaEstudiante(estudiante.getId(),
-                        estudiante.getNombre(), estudiante.getApellido(), estudiante.getDescripcion(), estudiante.getNota1(),
-                        estudiante.getNota2(), estudiante.getNota3(), estudiante.getNotaFinal());
+                        estudiante.getNombre(), estudiante.getApellido(), estudiante.getDescripcion(),
+                        estudiante.getCurso().toString(), estudiante.getNota1(), estudiante.getNota2(),
+                        estudiante.getNota3(), estudiante.getNotaFinal());
 
                 return ResponseEntity.ok(datosRespuestaEstudiante);
 
@@ -141,11 +151,15 @@ public class EstudianteController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity eliminarEstudiante(@PathVariable long id){
+    @Operation(summary = "Elimina un estudiante", security = @SecurityRequirement(name = "basicAuth"))
+    public ResponseEntity eliminarEstudiante(@PathVariable long id) {
+
+        Estudiante estudiante = estudianteRepository.getReferenceById(id);
 
         estudianteRepository.deleteById(id);
 
-        return ResponseEntity.ok("El estudiante con el id: " + id + " fue eliminado exitosamente");
+        return ResponseEntity.ok("El estudiante con el id: " + estudiante.getNombre() + " " + estudiante.getApellido() +
+                " fue eliminado exitosamente");
 
     }
 

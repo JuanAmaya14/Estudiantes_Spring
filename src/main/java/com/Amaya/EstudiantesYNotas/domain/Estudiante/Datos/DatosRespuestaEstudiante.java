@@ -5,6 +5,7 @@ public record DatosRespuestaEstudiante(
         String nombre,
         String apellido,
         String descripcion,
+        String curso,
         double nota1,
         double nota2,
         double nota3,

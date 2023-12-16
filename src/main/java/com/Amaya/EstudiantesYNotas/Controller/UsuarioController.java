@@ -1,16 +1,18 @@
 package com.Amaya.EstudiantesYNotas.Controller;
 
-import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosListadoUsuario;
-import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosModificarUsuario;
-import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosRegistroUsuario;
-import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.DatosRespuestaUsuario;
+import com.Amaya.EstudiantesYNotas.domain.Usuario.Datos.*;
 import com.Amaya.EstudiantesYNotas.domain.Usuario.Usuario;
 import com.Amaya.EstudiantesYNotas.repositorio.UsuarioRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -19,7 +21,8 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/usuario")
-public class UsusarioController {
+@Tag(name = "Usuario")
+public class UsuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -29,6 +32,7 @@ public class UsusarioController {
 
     @PostMapping("/registro")
     @Transactional
+    @Operation(summary = "Registra un usuario")
     public ResponseEntity RegistrarUsuario(@RequestBody @Valid DatosRegistroUsuario datosRegistroUsuario,
                                            UriComponentsBuilder uriComponentsBuilder) {
 
@@ -46,18 +50,20 @@ public class UsusarioController {
     }
 
     @GetMapping
-    public ResponseEntity ListarUsuarios() {
+    @Operation(summary = "Lista todos los usuarios", security = @SecurityRequirement(name = "basicAuth"))
+    public ResponseEntity<Page<DatosListadoUsuario>> ListarUsuarios(@PageableDefault(size = 20) Pageable pageable) {
 
-        return ResponseEntity.ok(usuarioRepository.findAll());
+        return ResponseEntity.ok(usuarioRepository.findAll(pageable).map(DatosListadoUsuario::new));
 
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Lista usuario por id", security = @SecurityRequirement(name = "basicAuth"))
     public ResponseEntity<DatosListadoUsuario> ListarUsuarioPorId(@PathVariable long id) {
 
         Usuario usuario = usuarioRepository.getReferenceById(id);
 
-        DatosListadoUsuario datosListadoUsuario = new DatosListadoUsuario(usuario.getNombre(),
+        DatosListadoUsuario datosListadoUsuario = new DatosListadoUsuario(usuario.getId(), usuario.getNombre(),
                 usuario.getContrasenha());
 
         return ResponseEntity.ok(datosListadoUsuario);
@@ -66,6 +72,7 @@ public class UsusarioController {
 
     @PutMapping
     @Transactional
+    @Operation(summary = "Modifica usuario", security = @SecurityRequirement(name = "basicAuth"))
     public ResponseEntity modificarUsuario(@RequestBody @Valid DatosModificarUsuario datosModificarUsuario) {
 
         String contrasenha = passwordEncoder.encode(datosModificarUsuario.contrasenha());
@@ -83,11 +90,14 @@ public class UsusarioController {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @Operation(summary = "Elimina usuairo por id", security = @SecurityRequirement(name = "basicAuth"))
     public ResponseEntity eliminarUsuario(@PathVariable long id) {
+
+        Usuario usuario = usuarioRepository.getReferenceById(id);
 
         usuarioRepository.deleteById(id);
 
-        return ResponseEntity.ok("El usuario con el id: " + id + " fue eliminado exitosamente");
+        return ResponseEntity.ok("El usuario: " + usuario.getNombre() + " fue eliminado exitosamente");
 
     }
 

@@ -1,7 +1,6 @@
 package com.Amaya.EstudiantesYNotas.domain.Estudiante;
 
-import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosModificarEstudiante;
-import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.DatosRegistroEstudiante;
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,16 +21,16 @@ public class Estudiante {
     private String nombre;
     private String apellido;
     private String descripcion;
-    private double nota1;
-    private double nota2;
-    private double nota3;
-    private double notaFinal;
+    private double nota1, nota2, nota3, notaFinal;
+    @Enumerated(EnumType.STRING)
+    private Curso curso;
 
     public Estudiante(DatosRegistroEstudiante datosRegistroEstudiante) {
 
         this.nombre = datosRegistroEstudiante.nombre();
         this.apellido = datosRegistroEstudiante.apellido();
         this.descripcion = datosRegistroEstudiante.descripcion();
+        this.curso = datosRegistroEstudiante.curso();
         this.nota1 = datosRegistroEstudiante.nota1();
         this.nota2 = datosRegistroEstudiante.nota2();
         this.nota3 = datosRegistroEstudiante.nota3();
@@ -56,6 +55,12 @@ public class Estudiante {
         if (datosModificarEstudiante.descripcion() != null) {
 
             this.descripcion = datosModificarEstudiante.descripcion();
+
+        }
+
+        if (datosModificarEstudiante.curso() != null) {
+
+            this.curso = Curso.valueOf(datosModificarEstudiante.curso());
 
         }
 

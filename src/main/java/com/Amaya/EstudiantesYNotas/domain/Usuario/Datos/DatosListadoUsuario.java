@@ -1,4 +1,13 @@
 package com.Amaya.EstudiantesYNotas.domain.Usuario.Datos;
 
-public record DatosListadoUsuario(String nombre, String contrasenha) {
+import com.Amaya.EstudiantesYNotas.domain.Usuario.Usuario;
+
+public record DatosListadoUsuario(long id, String nombre, String contrasenha) {
+
+    public DatosListadoUsuario(Usuario usuario) {
+
+        this(usuario.getId(), usuario.getNombre(), usuario.getContrasenha());
+
+    }
+
 }

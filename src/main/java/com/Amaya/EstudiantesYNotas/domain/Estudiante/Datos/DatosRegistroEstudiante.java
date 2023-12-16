@@ -1,5 +1,6 @@
 package com.Amaya.EstudiantesYNotas.domain.Estudiante.Datos;
 
+import com.Amaya.EstudiantesYNotas.domain.Estudiante.Curso;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,6 +16,9 @@ public record DatosRegistroEstudiante(
         String descripcion,
 
         @NotNull
+        Curso curso,
+
+        @NotNull
         double nota1,
 
         @NotNull
@@ -22,7 +26,6 @@ public record DatosRegistroEstudiante(
 
         @NotNull
         double nota3
-
 
 ) {
 }

@@ -1,0 +1,2 @@
+ALTER TABLE estudiantes
+ADD COLUMN curso VARCHAR(50) NOT NULL;
