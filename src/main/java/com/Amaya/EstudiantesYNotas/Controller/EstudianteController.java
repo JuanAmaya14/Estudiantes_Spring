@@ -23,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/estudiante")
 @Tag(name = "Estudiante")
+@SecurityRequirement(name = "basicAuth")
 public class EstudianteController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class EstudianteController {
 
     @PostMapping
     @Transactional
-    @Operation(summary = "Registra un estudiante", security = @SecurityRequirement(name = "basicAuth"))
+    @Operation(summary = "Registra un estudiante")
     public ResponseEntity registrarEstudiante(@RequestBody @Valid DatosRegistroEstudiante datosRegistroEstudiante,
                                               UriComponentsBuilder uriComponentsBuilder) {
 
@@ -83,7 +84,7 @@ public class EstudianteController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Lista estudiante por id", security = @SecurityRequirement(name = "basicAuth"))
+    @Operation(summary = "Lista estudiante por id")
     public ResponseEntity<DatosListadoEstudiante> listarEstudiantesPorId(@PathVariable long id) {
 
         Estudiante estudiante = estudianteRepository.getReferenceById(id);
@@ -102,7 +103,7 @@ public class EstudianteController {
 
     @PutMapping
     @Transactional
-    @Operation(summary = "Modificar estudiante", security = @SecurityRequirement(name = "basicAuth"))
+    @Operation(summary = "Modificar estudiante")
     public ResponseEntity modificarEstudiante(@RequestBody @Valid DatosModificarEstudiante datosModificarEstudiante) {
 
         Estudiante estudiante = estudianteRepository.getReferenceById(datosModificarEstudiante.id());
@@ -151,7 +152,7 @@ public class EstudianteController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    @Operation(summary = "Elimina un estudiante", security = @SecurityRequirement(name = "basicAuth"))
+    @Operation(summary = "Elimina un estudiante")
     public ResponseEntity eliminarEstudiante(@PathVariable long id) {
 
         Estudiante estudiante = estudianteRepository.getReferenceById(id);
